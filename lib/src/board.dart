@@ -124,9 +124,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
-        child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Board(
+      child: Board(
         groups: widget.groups,
         groupItemBuilder: widget.groupItemBuilder,
         controller: widget.controller,
@@ -143,8 +141,9 @@ class _KanbanBoardState extends State<KanbanBoard> {
         groupFooterBuilder: widget.groupFooterBuilder,
         groupGhost: widget.groupGhost,
         itemGhost: widget.itemGhost,
+        newCardWidget: widget.newCardWidget,
       ),
-    ));
+    );
   }
 }
 
@@ -185,7 +184,7 @@ class Board extends ConsumerStatefulWidget {
   final GroupFooterBuilder? groupFooterBuilder;
   final Widget? groupGhost;
   final Widget? itemGhost;
-  final Widget? newCardWidget;
+  final Widget Function(BuildContext, String, String)? newCardWidget;
 
   @override
   ConsumerState<Board> createState() => _BoardState();
@@ -272,6 +271,10 @@ class _BoardState extends ConsumerState<Board> {
         controller: widget.controller,
       ),
     );
+    final boardState = ref.read(_boardStateController);
+    boardState
+      ..groupItemBuilder = widget.groupItemBuilder
+      ..newCardWidgetBuilder = widget.newCardWidget;
 
     //saving [_boardStateController] to the controller storage
     BoardStateControllerStorage.I.addStateController(
@@ -309,6 +312,7 @@ class _BoardState extends ConsumerState<Board> {
 
   @override
   Widget build(BuildContext context) {
+    ref.read(_boardStateController).boardContext = context;
     WidgetsBinding.instance.addPostFrameCallback((_) => _getBoardOffset());
     return Scaffold(
       backgroundColor: Colors.white,
