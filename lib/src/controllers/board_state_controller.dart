@@ -23,6 +23,15 @@ class BoardStateController extends ChangeNotifier {
   /// It holds the board position
   Offset boardOffset = Offset.zero;
 
+  /// A cached BuildContext for rendering new items via controller actions.
+  BuildContext? boardContext;
+
+  /// The builder used to render group items.
+  Widget Function(BuildContext, String, int)? groupItemBuilder;
+
+  /// The builder used to render the new-card widget.
+  Widget Function(BuildContext, String, String)? newCardWidgetBuilder;
+
   // It holds the user's input ghost widget for the item.
   Widget? itemGhost;
 
